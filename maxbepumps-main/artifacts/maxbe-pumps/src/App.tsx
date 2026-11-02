@@ -3,6 +3,7 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type MouseEvent,
   type ReactNode,
 } from "react";
 import { Link, Route, Switch, useLocation } from "wouter";
@@ -24,7 +25,9 @@ import {
   MapPin,
   Navigation,
   PhoneCall,
+  Play,
   Search,
+  Youtube,
   X,
   Zap,
 } from "lucide-react";
@@ -37,7 +40,11 @@ import {
   factoryLocation,
   factoryMapPlaceUrl,
 } from "./data/factory";
-import { findMatchingProducts } from "./data/pump-finder";
+import {
+  findMatchingProducts,
+  type PumpFinderCriteria,
+  type PumpMatch,
+} from "./data/pump-finder";
 import {
   categories,
   categoryBySlug,
@@ -72,7 +79,7 @@ function Brand({ footer = false }: { footer?: boolean }) {
             alt=""
             loading="lazy"
           />
-          <span className="footer-brand-tagline">THE LOW VOLTAGE KING</span>
+          <span className="footer-brand-tagline">LOW VOLTAGE KING</span>
         </>
       ) : (
         <>
@@ -83,7 +90,7 @@ function Brand({ footer = false }: { footer?: boolean }) {
               alt=""
             />
           </span>
-          <span className="brand-tagline">THE LOW VOLTAGE KING</span>
+          <span className="brand-tagline">LOW VOLTAGE KING</span>
         </>
       )}
     </Link>
@@ -94,21 +101,38 @@ function SocialLinks({ className }: { className: string }) {
   return (
     <div className={className} aria-label="MAXBE on social media">
       {socialLinks.map(({ label, url }) => {
-        const Icon = Instagram;
+        const Icon = label === "YouTube" ? Youtube : Instagram;
         return (
           <a
             key={label}
+            className="social-action"
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`MAXBE on ${label}`}
+            aria-label={`Open MAXBE Pumps on ${label}`}
+            title={label}
           >
-            <Icon size={18} aria-hidden="true" />
-            <span>{label}</span>
+            <Icon size={20} aria-hidden="true" />
+            <span className="social-action-label">{label}</span>
           </a>
         );
       })}
     </div>
+  );
+}
+
+function WhatsAppIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      focusable="false"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374a9.82 9.82 0 0 1-1.51-5.26c.002-5.45 4.437-9.884 9.893-9.884 2.64.001 5.12 1.03 6.985 2.897a9.825 9.825 0 0 1 2.892 6.99c-.003 5.45-4.438 9.885-9.887 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.89c-.001 2.096.547 4.142 1.588 5.946L0 24l6.335-1.662a11.933 11.933 0 0 0 5.71 1.453h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.41z" />
+    </svg>
   );
 }
 
@@ -262,16 +286,16 @@ function Header() {
               Catalogue
             </Link>
             <Link
-              href="/dealers"
-              className={location === "/dealers" ? "active" : ""}
-            >
-              Become a Dealer
-            </Link>
-            <Link
               href="/find-a-dealer"
               className={location === "/find-a-dealer" ? "active" : ""}
             >
               Find a Dealer
+            </Link>
+            <Link
+              href="/find-your-pump"
+              className={location === "/find-your-pump" ? "active" : ""}
+            >
+              Find a Pump
             </Link>
             <Link
               href="/contact"
@@ -524,7 +548,7 @@ function Shell({ children }: { children: ReactNode }) {
       </main>
       <Footer />
       <a
-        className="site-whatsapp-float"
+        className="site-whatsapp-float whatsapp-action"
         href={createWhatsAppUrl(
           "Hello MAXBE PUMPS, I would like to enquire about your pumps.",
         )}
@@ -532,7 +556,10 @@ function Shell({ children }: { children: ReactNode }) {
         rel="noopener noreferrer"
         aria-label="Open WhatsApp chat with MAXBE Pumps"
       >
-        <MessageCircle size={23} />
+        <WhatsAppIcon size={27} />
+        <span className="whatsapp-action-label" aria-hidden="true">
+          WhatsApp
+        </span>
       </a>
     </div>
   );
@@ -890,7 +917,7 @@ function Home() {
               alt="MAXBE Pumps"
               loading="lazy"
             />
-            <span>THE LOW VOLTAGE KING</span>
+            <span>LOW VOLTAGE KING</span>
           </div>
           <div className="dealer-acquisition-copy">
             <Eyebrow>BECOME A MAXBE PUMPS DEALER</Eyebrow>
@@ -942,7 +969,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle size={16} aria-hidden="true" />
+                <WhatsAppIcon size={18} />
                 WhatsApp dealer enquiry
               </a>
             </div>
@@ -1053,7 +1080,13 @@ function Home() {
   );
 }
 
-function ProductCard({ product }: { product: ProductModel }) {
+function ProductCard({
+  product,
+  finderMatch,
+}: {
+  product: ProductModel;
+  finderMatch?: PumpMatch;
+}) {
   const category = categoryBySlug(product.categorySlug);
   const whatsappUrl = createWhatsAppUrl(
     `Hello MAXBE PUMPS, I am interested in the ${product.name} (Model: ${product.model}). Please share more details and pricing.`,
@@ -1091,6 +1124,34 @@ function ProductCard({ product }: { product: ProductModel }) {
             <b>{product.maxHead}</b>
           </span>
         </div>
+        {finderMatch && (
+          <div className="finder-match-checks">
+            {(["match", "mismatch", "unknown"] as const).map((status) => {
+              const checks = finderMatch.checks.filter(
+                (check) => check.status === status,
+              );
+              if (!checks.length) return null;
+              return (
+                <div className="finder-match-check-group" key={status}>
+                  <strong>
+                    {status === "match"
+                      ? "Yes"
+                      : status === "mismatch"
+                        ? "No"
+                        : "Check"}
+                  </strong>
+                  <ul>
+                    {checks.map((check) => (
+                      <li key={check.label}>
+                        <b>{check.label}:</b> {check.detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
         <div className="product-card-actions">
           <Link
             className="btn product-view-link"
@@ -1105,7 +1166,7 @@ function ProductCard({ product }: { product: ProductModel }) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Enquire <MessageCircle size={14} />
+            Enquire <WhatsAppIcon size={16} />
           </a>
         </div>
       </div>
@@ -1382,10 +1443,40 @@ function ProductDetail({ params }: { params: { slug?: string } }) {
   const whatsappUrl = createWhatsAppUrl(
     `Hello MAXBE PUMPS, I am interested in the ${product.name} (Model: ${product.model}). Please share more details and pricing.`,
   );
+  const [expandedAction, setExpandedAction] = useState<string | null>(null);
+  const expandedActionRef = useRef<string | null>(null);
+  const pendingTouchActivation = useRef<string | null>(null);
   const related = products.filter(
     (item) =>
       item.categorySlug === product.categorySlug && item.slug !== product.slug,
   );
+  const handleActionPointerDown = (
+    action: string,
+    pointerType: string,
+  ) => {
+    if (pointerType !== "touch") return;
+    if (expandedActionRef.current === action) {
+      pendingTouchActivation.current = null;
+      return;
+    }
+
+    expandedActionRef.current = action;
+    pendingTouchActivation.current = action;
+    setExpandedAction(action);
+  };
+  const handleActionBlur = (action: string) => {
+    if (expandedActionRef.current !== action) return;
+    expandedActionRef.current = null;
+    setExpandedAction(null);
+  };
+  const handleActionClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    action: string,
+  ) => {
+    if (pendingTouchActivation.current !== action) return;
+    pendingTouchActivation.current = null;
+    event.preventDefault();
+  };
   return (
     <>
       <Meta
@@ -1456,21 +1547,56 @@ function ProductDetail({ params }: { params: { slug?: string } }) {
                 </>
               )}
               <div className="product-detail-actions">
-                <a className="btn product-quote-link" href="#request-quote">
-                  Get a Quote <ArrowRight size={16} />
-                </a>
                 <a
-                  className="btn whatsapp-enquiry"
+                  className={`btn whatsapp-enquiry product-action-icon-button action-whatsapp${expandedAction === "whatsapp" ? " is-expanded" : ""}`}
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onPointerDown={(event) =>
+                    handleActionPointerDown("whatsapp", event.pointerType)
+                  }
+                  onBlur={() => handleActionBlur("whatsapp")}
+                  onClick={(event) => handleActionClick(event, "whatsapp")}
                 >
-                  <MessageCircle size={16} />
-                  WhatsApp Enquiry
+                  <WhatsAppIcon size={18} />
+                  <span className="product-action-label">WhatsApp Enquiry</span>
                 </a>
-                <a className="btn outline" href="tel:+919488353564">
-                  <PhoneCall size={16} />
-                  Call Us
+                <a
+                  className={`btn outline product-action-icon-button action-call${expandedAction === "call" ? " is-expanded" : ""}`}
+                  href="tel:+919488353564"
+                  onPointerDown={(event) =>
+                    handleActionPointerDown("call", event.pointerType)
+                  }
+                  onBlur={() => handleActionBlur("call")}
+                  onClick={(event) => handleActionClick(event, "call")}
+                >
+                  <PhoneCall size={16} aria-hidden="true" />
+                  <span className="product-action-label">Call Us</span>
+                </a>
+                <span
+                  className="product-detail-action-break"
+                  aria-hidden="true"
+                />
+                <a
+                  className={`btn outline product-video-link product-video-button product-action-icon-button action-video${expandedAction === "video" ? " is-expanded" : ""}`}
+                  href="https://youtu.be/oVi2zkgylWo?si=g3-Q_1wx1seD_iJB"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onPointerDown={(event) =>
+                    handleActionPointerDown("video", event.pointerType)
+                  }
+                  onBlur={() => handleActionBlur("video")}
+                  onClick={(event) => handleActionClick(event, "video")}
+                >
+                  <Play
+                    size={16}
+                    fill="currentColor"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                  <span className="product-action-label">
+                    Play Product Video
+                  </span>
                 </a>
               </div>
               <p className="product-reference-note">
@@ -1805,6 +1931,39 @@ const finderSteps: FinderStep[] = [
       ["other", "Other", "Another or not-yet-defined requirement"],
     ],
   },
+  {
+    title: "What motor power are you considering?",
+    subtitle: "Choose an approximate horsepower, or leave this to MAXBE.",
+    options: [
+      ["0.5", "0.5 HP", "Half horsepower"],
+      ["1", "1 HP", "One horsepower"],
+      ["2", "2 HP", "Two horsepower"],
+      ["3", "3 HP", "Three horsepower"],
+      ["unsure", "Not sure", "Compare all listed motor powers"],
+    ],
+  },
+  {
+    title: "What head do you need?",
+    subtitle: "Select an approximate minimum head in metres, if known.",
+    options: [
+      ["15", "At least 15 m", "Minimum head you hope to achieve"],
+      ["30", "At least 30 m", "Minimum head you hope to achieve"],
+      ["60", "At least 60 m", "Minimum head you hope to achieve"],
+      ["61", "Above 60 m", "High head requirement"],
+      ["unsure", "Not sure", "Ask MAXBE to help confirm"],
+    ],
+  },
+  {
+    title: "What discharge do you need?",
+    subtitle: "Select an approximate minimum flow in litres per minute, if known.",
+    options: [
+      ["15", "At least 15 LPM", "Minimum flow you hope to achieve"],
+      ["30", "At least 30 LPM", "Minimum flow you hope to achieve"],
+      ["50", "At least 50 LPM", "Minimum flow you hope to achieve"],
+      ["61", "Above 60 LPM", "High flow requirement"],
+      ["unsure", "Not sure", "Ask MAXBE to help confirm"],
+    ],
+  },
 ];
 
 function Finder() {
@@ -1814,6 +1973,15 @@ function Finder() {
   const done = step >= finderSteps.length;
   const current = finderSteps[Math.min(step, finderSteps.length - 1)];
   const progress = done ? 100 : Math.round((step / finderSteps.length) * 100);
+  const finderCriteria: PumpFinderCriteria = {
+    application: answers[0] ?? "",
+    category: answers[1] ?? "",
+    source: answers[2] ?? "",
+    requirement: answers[3] ?? "",
+    horsepower: answers[4] ?? "",
+    head: answers[5] ?? "",
+    discharge: answers[6] ?? "",
+  };
   const restart = () => {
     setAnswers({});
     setError("");
@@ -1827,25 +1995,26 @@ function Finder() {
     setError("");
     setStep(step + 1);
   };
-  const matchingProducts = done
-    ?     findMatchingProducts({
-      application: answers[0] ?? "",
-      category: answers[1] ?? "",
-      source: answers[2] ?? "",
-      requirement: answers[3] ?? "",
-    })
-    : [];
+  const matchingProducts = done ? findMatchingProducts(finderCriteria) : [];
+  const finderWhatsAppUrl = createWhatsAppUrl(
+    `Hello MAXBE PUMPS, I used the pump finder and need help confirming a suitable model. ${finderSteps
+      .map(
+        (item, index) =>
+          `${item.title} ${item.options.find(([value]) => value === answers[index])?.[1] ?? "Not sure"}`,
+      )
+      .join("; ")}. Please contact me for technical confirmation.`,
+  );
 
   return (
     <>
       <Meta
         title="Find your pump"
-        description="Answer four simple questions to find MAXBE product entries with descriptions that match the available information."
+        description="Answer questions about your pump use, type, motor power, head and discharge to compare MAXBE models using published information."
       />
       <PageHero
         kicker="PRELIMINARY PRODUCT FINDER"
         title="Find a pump for your water requirement."
-        text="Tell us about the application, pump range, water source and requirement. Matches use only the product information currently listed on this website."
+        text="Share your application, water source, pump type, motor power, head and flow needs. Results compare only the product information currently listed on this website."
       />
       <section className="section">
         <div className="container finder">
@@ -1937,39 +2106,43 @@ function Finder() {
               </>
             ) : (
               <>
-                <Eyebrow>PRODUCT INFORMATION MATCHES</Eyebrow>
-                <h2>
-                  {matchingProducts.length
-                    ? `${matchingProducts.length} listed product${matchingProducts.length === 1 ? " matches" : "s match"} the available product details`
-                    : "We need more information to identify a matching product"}
-                </h2>
+                <Eyebrow>CLOSEST MATCHES</Eyebrow>
+                <h2>Matching Pump Models</h2>
                 <p>
-                  This is a text-based comparison of published category,
-                  application and description details. It is not a technical
-                  suitability recommendation. MAXBE should confirm product fit,
-                  specifications and availability for your installation.
+                  These products are ranked by how closely their published
+                  information matches your answers. A missing or mismatched
+                  specification is called out on each result.
                 </p>
-                {matchingProducts.length > 0 ? (
-                  <div className="catalog-grid finder-results">
-                    {matchingProducts.map((product) => (
-                      <ProductCard product={product} key={product.slug} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="notice">
-                    The available product descriptions do not support a
-                    reliable match for every answer selected. This does not
-                    mean MAXBE has no suitable product. Contact MAXBE to
-                    discuss your application and confirm the correct option.
-                  </div>
-                )}
+                <div className="notice">
+                  The listed data does not include full pump curves or every
+                  model-specific flow specification. Results are preliminary
+                  comparisons, not a guarantee of pump suitability.{" "}
+                  <strong>
+                    Please contact MAXBE for technical confirmation.
+                  </strong>
+                </div>
+                <div className="catalog-grid finder-results">
+                  {matchingProducts.map((match) => (
+                    <ProductCard
+                      product={match.product}
+                      finderMatch={match}
+                      key={match.product.slug}
+                    />
+                  ))}
+                </div>
                 <div className="finder-actions">
                   <button className="btn outline" onClick={restart}>
                     Start again
                   </button>
-                  <Link className="btn" href="/contact">
-                    Contact MAXBE <ArrowRight size={15} />
-                  </Link>
+                  <a
+                    className="btn whatsapp-enquiry"
+                    href={finderWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <WhatsAppIcon size={16} />
+                    Ask MAXBE on WhatsApp
+                  </a>
                 </div>
               </>
             )}
@@ -2352,7 +2525,7 @@ function Contact({ dealer = false }: { dealer?: boolean }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle size={17} aria-hidden="true" />
+                <WhatsAppIcon size={18} />
                 Enquire About Dealership on WhatsApp
               </a>
             )}
@@ -2491,7 +2664,7 @@ function About() {
               src="/assets/maxbe-logo-transparent.png"
               alt="MAXBE Pumps"
             />
-            <p>THE LOW VOLTAGE KING</p>
+            <p>LOW VOLTAGE KING</p>
             <span>MAXBE Industries · Coimbatore · Est. 1992</span>
           </div>
         </div>

@@ -3096,6 +3096,256 @@ body,
   }
 }
 
+.footer-socials,
+.contact-social-links {
+  width: max-content;
+  min-height: 44px;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-socials .social-action,
+.contact-social-links .social-action {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid #dce4ec;
+  border-radius: 7px;
+  background: #fff;
+  color: #183153;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    width 280ms ease,
+    flex-basis 280ms ease,
+    gap 280ms ease,
+    border-color 280ms ease,
+    background-color 280ms ease,
+    color 280ms ease;
+}
+
+.social-action svg {
+  display: block;
+  flex: 0 0 20px;
+}
+
+.social-action-label {
+  display: block;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    width 280ms ease,
+    opacity 180ms ease;
+}
+
+.footer-socials .social-action:hover,
+.footer-socials .social-action:focus-visible,
+.contact-social-links .social-action:hover,
+.contact-social-links .social-action:focus-visible {
+  width: 128px;
+  flex-basis: 128px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 12px;
+  border-color: #d71920;
+  background: #fff0f0;
+  color: #d71920;
+}
+
+.social-action:hover .social-action-label,
+.social-action:focus-visible .social-action-label {
+  width: 62px;
+  opacity: 1;
+}
+
+.footer .footer-socials .social-action {
+  border-color: rgb(255 255 255 / 28%);
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+}
+
+.footer .footer-socials .social-action:hover,
+.footer .footer-socials .social-action:focus-visible {
+  border-color: #e6ad32;
+  background: rgb(255 255 255 / 14%);
+  color: #e6ad32;
+}
+
+.social-action:focus-visible {
+  outline: 3px solid #e6ad32;
+  outline-offset: 3px;
+}
+
+.site .site-whatsapp-float.whatsapp-action {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+  white-space: nowrap;
+  transition:
+    width 280ms ease,
+    gap 280ms ease,
+    padding 280ms ease,
+    border-color 280ms ease,
+    background-color 280ms ease,
+    color 280ms ease,
+    transform 200ms ease;
+}
+
+.whatsapp-action svg {
+  display: block;
+  flex: 0 0 27px;
+}
+
+.whatsapp-action-label {
+  display: block;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    width 280ms ease,
+    opacity 180ms ease;
+}
+
+.site .site-whatsapp-float.whatsapp-action:hover,
+.site .site-whatsapp-float.whatsapp-action:focus-visible {
+  width: 152px;
+  justify-content: flex-start;
+  gap: 9px;
+  padding: 0 15px;
+}
+
+.whatsapp-action:hover .whatsapp-action-label,
+.whatsapp-action:focus-visible .whatsapp-action-label {
+  width: 72px;
+  opacity: 1;
+}
+
+.site .site-whatsapp-float.whatsapp-action:focus-visible {
+  outline: 3px solid #e6ad32;
+  outline-offset: 3px;
+}
+
+.product-detail-action-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+.product-detail-actions .product-action-icon-button {
+  box-sizing: border-box;
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  min-height: 48px;
+  flex: 0 0 48px;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+  white-space: nowrap;
+  transition:
+    width 280ms ease,
+    flex-basis 280ms ease,
+    gap 280ms ease,
+    padding 280ms ease,
+    transform 200ms ease,
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.product-detail-actions .action-whatsapp {
+  --product-action-width: 202px;
+  --product-action-label-width: 134px;
+}
+
+.product-detail-actions .action-call {
+  --product-action-width: 118px;
+  --product-action-label-width: 50px;
+}
+
+.product-detail-actions .action-video {
+  --product-action-width: 203px;
+  --product-action-label-width: 137px;
+}
+
+.product-action-label {
+  display: block;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    width 280ms ease,
+    opacity 180ms ease;
+}
+
+.product-detail-actions .product-action-icon-button:hover,
+.product-detail-actions .product-action-icon-button:focus-visible,
+.product-detail-actions .product-action-icon-button.is-expanded {
+  width: var(--product-action-width);
+  min-width: var(--product-action-width);
+  flex-basis: var(--product-action-width);
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+}
+
+.product-detail-actions .product-action-icon-button:hover .product-action-label,
+.product-detail-actions
+  .product-action-icon-button:focus-visible
+  .product-action-label,
+.product-detail-actions
+  .product-action-icon-button.is-expanded
+  .product-action-label {
+  width: var(--product-action-label-width);
+  opacity: 1;
+}
+
+.site .product-detail-actions .btn.product-video-link {
+  border-color: #d71920;
+  background: #fff;
+  color: #d71920;
+}
+
+.site .product-detail-actions .btn.product-video-link:hover,
+.site .product-detail-actions .btn.product-video-link:focus-visible {
+  border-color: #ae1118;
+  background: #fff0f0;
+  color: #ae1118;
+}
+
+.product-detail-actions .product-video-link:focus-visible {
+  outline: 3px solid #e6ad32;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-action,
+  .social-action-label,
+  .site .site-whatsapp-float.whatsapp-action,
+  .whatsapp-action-label,
+  .product-action-icon-button,
+  .product-action-label {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .water-background--home {
     animation: none;
@@ -3108,6 +3358,43 @@ body,
   max-width: 680px;
   margin: 22px 0 16px;
 }
+
+.finder-match-checks {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+  color: #344054;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.finder-match-check-group strong {
+  color: #183153;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.finder-match-check-group ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.finder-match-check-group li b {
+  color: #263b52;
+}
+
+.finder-panel .notice strong {
+  color: #183153;
+}
+
+@media (max-width: 640px) {
+  .finder-match-checks {
+    font-size: 12px;
+  }
+}
+
 
 .dealer-lookup-form > label {
   color: #183153;
