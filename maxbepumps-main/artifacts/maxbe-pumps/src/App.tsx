@@ -11,32 +11,39 @@ import {
   ArrowLeft,
   ArrowRight,
   Activity,
-  BookOpen,
+  BadgeCheck,
+  Building2,
   Check,
   ChevronDown,
   Cog,
   Droplets,
   Eye,
   Factory,
+  GraduationCap,
   Info,
-  Instagram,
   Menu,
   MessageCircle,
-  MapPin,
   Navigation,
   PhoneCall,
   Play,
   Search,
-  Youtube,
+  Store,
   X,
   Zap,
 } from "lucide-react";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaWhatsapp,
+  FaYoutube,
+} from "react-icons/fa6";
 import {
   ContactFactoryLocation,
   HomeFactoryLocation,
 } from "./components/FactoryLocation";
 import {
   createWhatsAppUrl,
+  factoryDirectionsUrl,
   factoryLocation,
   factoryMapPlaceUrl,
 } from "./data/factory";
@@ -58,8 +65,67 @@ import ProductCatalogueDashboard from "./pages/catalogue-dashboard";
 
 // Set this only after adding or verifying the official MAXBE PDF asset.
 const officialCataloguePdfUrl: string | null = null;
-const agricultureHomeVideoSrc = "/videos/maxbe-agriculture-home.mp4";
-const agricultureHomePoster = "/videos/maxbe-agriculture-home-poster.jpg";
+const productCategoryGallery: Record<string, { name: string }> = {
+  monoblock: {
+    name: "MONOBLOCK PUMPS",
+  },
+  openwell: {
+    name: "OPEN WELL PUMPS",
+  },
+  "v4-submersible": {
+    name: "SUBMERSIBLE PUMPS",
+  },
+} as const;
+
+type CompanyHistoryMilestone = {
+  id: string;
+  year: string;
+  heading: string;
+  description: string;
+  icon: typeof BadgeCheck;
+};
+
+const companyHistoryMilestones: CompanyHistoryMilestone[] = [
+  {
+    id: "registration",
+    year: "1992",
+    heading: "MAXBE Registration",
+    description:
+      "MAXBE Pumps was registered, marking the beginning of the company's journey.",
+    icon: BadgeCheck,
+  },
+  {
+    id: "new-building",
+    year: "2001",
+    heading: "New Building Established",
+    description: "A new company building was established.",
+    icon: Building2,
+  },
+  {
+    id: "bangalore-branch",
+    year: "2012",
+    heading: "Bangalore Branch",
+    description:
+      "Bangalore branch operations started and have continued to the present.",
+    icon: Factory,
+  },
+  {
+    id: "mysore-branch",
+    year: "2022",
+    heading: "Mysore Branch",
+    description:
+      "A Mysore branch was established as part of the dealer network.",
+    icon: Store,
+  },
+  {
+    id: "jss-technical-class",
+    year: "2024",
+    heading: "JSS College Technical Class",
+    description:
+      "MAXBE participated in or conducted a technical class at JSS College.",
+    icon: GraduationCap,
+  },
+];
 
 function Brand({ footer = false }: { footer?: boolean }) {
   return (
@@ -79,7 +145,7 @@ function Brand({ footer = false }: { footer?: boolean }) {
             alt=""
             loading="lazy"
           />
-          <span className="footer-brand-tagline">LOW VOLTAGE KING</span>
+          <span className="footer-brand-tagline">THE LOW VOLTAGE KING</span>
         </>
       ) : (
         <>
@@ -90,7 +156,7 @@ function Brand({ footer = false }: { footer?: boolean }) {
               alt=""
             />
           </span>
-          <span className="brand-tagline">LOW VOLTAGE KING</span>
+          <span className="brand-tagline">THE LOW VOLTAGE KING</span>
         </>
       )}
     </Link>
@@ -101,7 +167,12 @@ function SocialLinks({ className }: { className: string }) {
   return (
     <div className={className} aria-label="MAXBE on social media">
       {socialLinks.map(({ label, url }) => {
-        const Icon = label === "YouTube" ? Youtube : Instagram;
+        const Icon =
+          label === "Facebook"
+            ? FaFacebookF
+            : label === "YouTube"
+              ? FaYoutube
+              : FaInstagram;
         return (
           <a
             key={label}
@@ -113,11 +184,85 @@ function SocialLinks({ className }: { className: string }) {
             title={label}
           >
             <Icon size={20} aria-hidden="true" />
-            <span className="social-action-label">{label}</span>
+            <span>{label}</span>
           </a>
         );
       })}
+      <a
+        className="social-action"
+        href={createWhatsAppUrl(
+          "Hello MAXBE PUMPS, I would like to enquire about your pumps.",
+        )}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open WhatsApp chat with MAXBE Pumps"
+        title="WhatsApp"
+      >
+        <FaWhatsapp size={20} aria-hidden="true" />
+        <span>WhatsApp</span>
+      </a>
     </div>
+  );
+}
+
+function HomeSocialDock() {
+  const socialOrder = ["Instagram", "Facebook", "YouTube"] as const;
+
+  return (
+    <nav className="home-social-dock" aria-label="MAXBE social media">
+      <a
+        className="home-social-dock-link"
+        href={createWhatsAppUrl(
+          "Hello MAXBE PUMPS, I would like to enquire about your pumps.",
+        )}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open WhatsApp chat with MAXBE Pumps"
+        title="WhatsApp"
+      >
+        <FaWhatsapp size={20} aria-hidden="true" />
+        <span>WhatsApp</span>
+      </a>
+      {socialOrder.flatMap((label) => {
+        const social = socialLinks.find((link) => link.label === label);
+        const Icon =
+          label === "Instagram"
+            ? FaInstagram
+            : label === "Facebook"
+              ? FaFacebookF
+              : FaYoutube;
+        if (!social) {
+          if (label !== "Facebook") return [];
+          return [
+            <span
+              key={label}
+              className="home-social-dock-link home-social-dock-unavailable"
+              aria-disabled="true"
+              aria-label="Facebook link is not configured"
+              title="Facebook link not configured"
+            >
+              <Icon size={20} aria-hidden="true" />
+              <span>Facebook</span>
+            </span>,
+          ];
+        }
+
+        return [
+          <a
+            key={label}
+            className="home-social-dock-link"
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open MAXBE Pumps on ${label}`}
+            title={label}
+          >
+            <Icon size={20} aria-hidden="true" />
+            <span>{label}</span>
+          </a>,
+        ];
+      })}
+    </nav>
   );
 }
 
@@ -136,61 +281,20 @@ function WhatsAppIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function HomeHeroVideo() {
-  const [videoReady, setVideoReady] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-
+function WhatsAppFloatingButton() {
   return (
-    <div
-      className="hero-video-background"
-      aria-hidden="true"
-      style={{ backgroundImage: `url("${agricultureHomePoster}")` }}
+    <a
+      className="site-whatsapp-float"
+      data-testid="whatsapp-floating-button"
+      href={createWhatsAppUrl(
+        "Hello MAXBE PUMPS, I would like to enquire about your pumps.",
+      )}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Open WhatsApp chat with MAXBE Pumps"
     >
-      {!videoFailed && (
-        <video
-          className={`hero-background-video${videoReady ? " is-ready" : ""}`}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster={agricultureHomePoster}
-          onCanPlay={() => setVideoReady(true)}
-          onError={() => setVideoFailed(true)}
-        >
-          <source src={agricultureHomeVideoSrc} type="video/mp4" />
-        </video>
-      )}
-    </div>
-  );
-}
-
-function AgricultureVideoPanel() {
-  const [videoFailed, setVideoFailed] = useState(false);
-  const showVideo = agricultureHomeVideoSrc !== null && !videoFailed;
-
-  return (
-    <div className="agriculture-film-panel">
-      {showVideo ? (
-        <video
-          controls
-          preload="none"
-          playsInline
-          poster={agricultureHomePoster}
-          aria-label="Agricultural irrigation video"
-          onError={() => setVideoFailed(true)}
-        >
-          <source src={agricultureHomeVideoSrc} type="video/mp4" />
-          Your browser does not support HTML video.
-        </video>
-      ) : (
-        <img
-          src={agricultureHomePoster}
-          alt="Agricultural irrigation field with sprinklers watering crops."
-          loading="lazy"
-        />
-      )}
-    </div>
+      <FaWhatsapp size={22} aria-hidden="true" />
+    </a>
   );
 }
 
@@ -362,7 +466,6 @@ function Footer() {
             <Link href="/dealers">Become a Dealer</Link>
             <Link href="/catalogue">Catalogue</Link>
             <Link href="/contact">Contact</Link>
-            <Link href="/contact#enquiry-form">Get a Quote</Link>
             <Link href="/find-your-pump">Guided pump finder</Link>
           </div>
           <div className="footer-col footer-contact">
@@ -378,9 +481,6 @@ function Footer() {
             <a href={`mailto:${factoryLocation.email}`}>
               {factoryLocation.email}
             </a>
-            <a href={`mailto:${factoryLocation.secondaryEmail}`}>
-              {factoryLocation.secondaryEmail}
-            </a>
             <span>{factoryLocation.businessHours}</span>
             <a
               href={factoryMapPlaceUrl}
@@ -393,7 +493,8 @@ function Footer() {
         </div>
         <div className="footer-bottom">
           <span>
-            © {new Date().getFullYear()} MAXBE INDUSTRIES · COIMBATORE
+            © 2026 MAXBE Pumps | Developed and Maintained by Code Core Global
+            Hitech Solutions
           </span>
           <a
             href="https://www.maxbepumps.in"
@@ -537,30 +638,19 @@ function Shell({ children }: { children: ReactNode }) {
     .filter(Boolean)
     .join(" ");
   return (
-    <div className={`site ${pageStyles ? `ui-enhanced ${pageStyles}` : ""}`}>
+    <div
+      className={`site${routePath === "/" ? " site-homepage" : ""}${pageStyles ? ` ui-enhanced ${pageStyles}` : ""}`}
+    >
       <div
         className={`water-background water-background--${waterScene}`}
         aria-hidden="true"
       />
       <Header />
+      {routePath === "/" && <HomeSocialDock />}
       <main key={location.split("?")[0]} ref={mainRef} className="page-route">
         {children}
       </main>
       <Footer />
-      <a
-        className="site-whatsapp-float whatsapp-action"
-        href={createWhatsAppUrl(
-          "Hello MAXBE PUMPS, I would like to enquire about your pumps.",
-        )}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Open WhatsApp chat with MAXBE Pumps"
-      >
-        <WhatsAppIcon size={27} />
-        <span className="whatsapp-action-label" aria-hidden="true">
-          WhatsApp
-        </span>
-      </a>
     </div>
   );
 }
@@ -650,41 +740,6 @@ function CTA({
   );
 }
 
-function ProductVideoGallery() {
-  return (
-    <section
-      className="section video-showcase-section"
-      aria-labelledby="product-video-gallery-heading"
-    >
-      <div className="container section-head">
-        <div>
-          <h2 id="product-video-gallery-heading">
-            MAXBE Product Video Gallery
-          </h2>
-        </div>
-        <p>
-          Genuine MAXBE product demonstration footage has not been supplied
-          yet.
-        </p>
-      </div>
-      <div className="container video-showcase-grid">
-        {categories.map((category, index) => (
-          <article className="video-category-card" key={category.slug}>
-            <span className="video-category-index" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h3>{category.name}</h3>
-            <span className="video-category-rule" aria-hidden="true" />
-            <p className="video-category-status">
-              Product video coming soon
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function Home() {
   return (
     <>
@@ -693,7 +748,6 @@ function Home() {
         description="Explore MAXBE monoblock, open well submersible and V4 submersible pump products."
       />
       <section className="hero" aria-label="Hero section">
-        <HomeHeroVideo />
         <div className="hero-inner animate-in">
           <div className="hero-copy">
             <img
@@ -702,20 +756,22 @@ function Home() {
               alt="MAXBE PUMPS — Low Voltage King"
               fetchPriority="high"
             />
-            <h1>Powering Every Drop. Supporting Every Harvest.</h1>
+            <h1>POWERING EVERY DROP WITH PERFORMANCE.</h1>
             <p>
-              Reliable pumping solutions for agriculture, irrigation, water
-              management and industry. Explore our available product ranges and
-              find a useful starting point for your requirements.
+              Explore MAXBE’s low-voltage pumping solutions for agriculture,
+              irrigation, water management and industry. Discover our pump
+              ranges or learn about the company behind them.
             </p>
             <div className="hero-actions">
-              <Link href="/find-a-dealer" className="btn">
-                <MapPin size={16} aria-hidden="true" />
-                FIND A DEALER
+              <Link className="btn" href="/products">
+                Explore Our Products <ArrowRight size={16} />
               </Link>
-              <Link href="/find-your-pump" className="btn outline">
-                <Search size={16} aria-hidden="true" />
-                FIND A PUMP
+              <Link
+                className="btn outline"
+                href="/about#company-history"
+                aria-label="See the MAXBE company history timeline"
+              >
+                See Our Journey <ArrowRight size={16} />
               </Link>
             </div>
             <div className="hero-contact-strip">
@@ -755,26 +811,6 @@ function Home() {
           </div>
         </div>
       </section>
-      <section
-        className="section agriculture-film-section"
-        aria-labelledby="agriculture-film-heading"
-      >
-        <div className="container">
-          <div className="section-head agriculture-film-head">
-            <div>
-              <Eyebrow>AGRICULTURE &amp; IRRIGATION</Eyebrow>
-              <h2 id="agriculture-film-heading">
-                SMART WATER SOLUTIONS FOR AGRICULTURE
-              </h2>
-            </div>
-            <p>
-              Reliable water solutions for vegetable farms, agricultural
-              irrigation, and everyday water management.
-            </p>
-          </div>
-          <AgricultureVideoPanel />
-        </div>
-      </section>
       <section className="section">
         <div className="container section-head">
           <div>
@@ -791,27 +827,23 @@ function Home() {
             const categoryProducts = products.filter(
               (product) => product.categorySlug === category.slug,
             );
+            const categoryGallery = productCategoryGallery[category.slug];
             return (
               <Link
                 href={`/products?category=${category.slug}`}
                 className="tile home-category-tile"
                 key={category.slug}
               >
-                <span className="home-category-image" aria-hidden="true">
-                  <span className="category-visual-mark">
-                    <Droplets size={34} strokeWidth={1.5} />
+                <h3>{categoryGallery.name}</h3>
+                <span className="home-category-visual" aria-hidden="true">
+                  <span className="home-category-orbit" />
+                  <span className="home-category-emblem">
+                    <CategoryIcon categorySlug={category.slug} />
                   </span>
-                  <span className="category-visual-label">
-                    MAXBE PUMPS · PRODUCT RANGE
-                  </span>
-                </span>
-                <span className="category-icon">
-                  <CategoryIcon categorySlug={category.slug} />
                 </span>
                 <span className="tile-num">
                   {categoryProducts.length} listed models
                 </span>
-                <h3>{category.name}</h3>
                 <p>{category.description}</p>
                 <span className="category-browse">
                   Browse This Range <ArrowRight size={15} />
@@ -821,7 +853,6 @@ function Home() {
           })}
         </div>
       </section>
-      <ProductVideoGallery />
       <section className="section water-needs-section">
         <div className="container">
           <div className="water-needs-card">
@@ -909,73 +940,6 @@ function Home() {
           </Link>
         </div>
       </section>
-      <section className="section dealer-acquisition-section">
-        <div className="container dealer-acquisition-card">
-          <div className="dealer-acquisition-visual">
-            <img
-              src="/assets/maxbe-logo-transparent.png"
-              alt="MAXBE Pumps"
-              loading="lazy"
-            />
-            <span>LOW VOLTAGE KING</span>
-          </div>
-          <div className="dealer-acquisition-copy">
-            <Eyebrow>BECOME A MAXBE PUMPS DEALER</Eyebrow>
-            <h2>Grow Your Business with Maxbe Pumps</h2>
-            <p>
-              Are you a motor dealer, pump distributor, agricultural equipment
-              supplier, or industrial products retailer? Connect with Maxbe
-              Pumps to discuss a potential dealership opportunity and explore
-              how our product range may fit your market.
-            </p>
-            <ul className="dealer-benefits">
-              {[
-                {
-                  Icon: Cog,
-                  text: "Explore the available motor and pump product range.",
-                },
-                {
-                  Icon: BookOpen,
-                  text: "Access product catalogues and technical information.",
-                },
-                {
-                  Icon: MapPin,
-                  text: "Discuss your local market and customer requirements.",
-                },
-                {
-                  Icon: MessageCircle,
-                  text: "Connect with the company team for enquiries.",
-                },
-                {
-                  Icon: Factory,
-                  text: "Explore potential business collaboration.",
-                },
-              ].map(({ Icon, text }) => (
-                <li key={text}>
-                  <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="dealer-acquisition-actions">
-              <Link className="btn" href="/dealers#enquiry-form">
-                Apply for Dealership <ArrowRight size={16} />
-              </Link>
-              <a
-                className="dealer-whatsapp-link"
-                href={createWhatsAppUrl(
-                  "Hello MAXBE PUMPS, I would like to discuss a potential dealership opportunity.",
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <WhatsAppIcon size={18} />
-                WhatsApp dealer enquiry
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
       <section className="section applications-section">
         <div className="container section-head">
           <div>
@@ -1000,8 +964,8 @@ function Home() {
               "/applications/domestic",
             ],
             [
-              "Industrial light-duty pumping",
-              "Review the published industrial light-duty application for the MB-1HP model.",
+              "Industrial Lite Duty Pumping",
+              "Review the published industrial lite-duty application for the MB-1HP model.",
               "/products/maxbe-monoblock-1hp",
             ],
           ].map(([title, description, href]) => (
@@ -1019,10 +983,31 @@ function Home() {
         </div>
       </section>
       <section className="section why-section">
+        <div className="container home-company-intro">
+          <div className="home-company-copy">
+            <Eyebrow>WHO WE ARE</Eyebrow>
+            <h2>MAXBE INDUSTRIES — Coimbatore, since 1992</h2>
+            <p>
+              Established in 1992 in Coimbatore, MAXBE Industries manufactures
+              and supplies the MAXBE PUMPS brand.
+            </p>
+            <p>
+              The company’s product range includes monoblock pumps, open well
+              submersible pumps and slim 4-inch V4 submersible pumps.
+            </p>
+            <p>
+              The MAXBE website describes its pumps as designed for low-voltage
+              conditions common in rural and semi-urban areas.
+            </p>
+            <Link className="text-link" href="/about">
+              Discover MAXBE <ArrowRight size={15} />
+            </Link>
+          </div>
+        </div>
         <div className="container section-head">
           <div>
             <Eyebrow>WHY MAXBE PUMPS</Eyebrow>
-            <h2>A helpful start for your water needs.</h2>
+            <h2>WHY CHOOSE MAXBE PUMPS?</h2>
           </div>
           <p>
             Find listed pump ranges, review application guidance, and contact
@@ -1046,20 +1031,17 @@ function Home() {
               title: "Product information",
               text: "Compare published model details and confirm specifications with MAXBE.",
             },
-            {
-              icon: MessageCircle,
-              title: "Direct enquiry",
-              text: "Contact MAXBE for product guidance and current availability.",
-            },
-          ].map(({ icon: Icon, title, text }) => (
-            <article className="tile benefit-tile" key={title}>
-              <span className="why-maxbe-icon">
-                <Icon size={22} aria-hidden="true" />
-              </span>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </article>
-          ))}
+          ].map(({ icon: Icon, title, text }) => {
+            return (
+              <article className="tile benefit-tile" key={title}>
+                <span className="why-maxbe-icon">
+                  <Icon size={22} aria-hidden="true" />
+                </span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            );
+          })}
         </div>
       </section>
       <HomeFactoryLocation />
@@ -1104,7 +1086,9 @@ function ProductCard({
           </span>
           <span className="product-visual-kicker">MAXBE PUMPS · MODEL</span>
           <strong>{product.model}</strong>
-          <span className="product-visual-note">Official product image not supplied</span>
+          <span className="product-visual-note">
+            Official product image not supplied
+          </span>
         </div>
       </Link>
       <div className="product-body">
@@ -1166,7 +1150,7 @@ function ProductCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Enquire <WhatsAppIcon size={16} />
+            Enquire <MessageCircle size={14} />
           </a>
         </div>
       </div>
@@ -1307,12 +1291,12 @@ function Products() {
     <>
       <Meta
         title="Product Catalogue"
-        description="Browse MAXBE monoblock, open well submersible and V4 submersible pump models."
+        description="Browse MAXBE monoblock, open well submersible, and submersible pump models."
       />
       <PageHero
         kicker="COMPLETE RANGE"
         title="Product Catalogue"
-        text="Browse monoblock, open well submersible and V4 borewell pump models."
+        text="Browse monoblock, open well submersible, and 4-inch borewell pump models."
       />
       <section className="section product-listing-section">
         <div className="container">
@@ -1379,6 +1363,13 @@ function DealerPrompt() {
   return (
     <section className="section dealer-prompt-section">
       <div className="container dealer-prompt">
+        <img
+          className="dealer-prompt-image"
+          src="/images/dealer-partnership-handshake-new.jpg"
+          alt="Business partners shaking hands."
+          loading="lazy"
+          decoding="async"
+        />
         <div>
           <Eyebrow>DEALER ENQUIRIES</Eyebrow>
           <h2>Interested in offering MAXBE pump ranges?</h2>
@@ -1507,7 +1498,9 @@ function ProductDetail({ params }: { params: { slug?: string } }) {
                 {category.name}
               </span>
               <h1>{product.name}</h1>
-              <p className="product-detail-model">Model: {product.model}</p>
+              {product.model !== "MB-0.5HP" && (
+                <p className="product-detail-model">Model: {product.model}</p>
+              )}
               <p>{product.description}</p>
               <h2>Technical Specifications</h2>
               <div className="product-detail-specs">
@@ -1885,7 +1878,7 @@ const finderSteps: FinderStep[] = [
     options: [
       ["agricultural", "Agricultural", "Farms and irrigation"],
       ["domestic", "Domestic", "Household water supply"],
-      ["industrial", "Industrial", "Industrial water requirements"],
+      ["industrial", "Commercial", "Commercial and industrial water requirements"],
       ["other", "Other", "A different or not-yet-defined application"],
     ],
   },
@@ -1894,10 +1887,10 @@ const finderSteps: FinderStep[] = [
     subtitle: "Choose a range, or select Not sure for help comparing.",
     options: [
       ["monoblock", "Monoblock Pumps", "Surface-mounted pump range"],
-      ["openwell", "Open Well Submersible", "For open well pump enquiries"],
+      ["openwell", "Open Well Pumps", "For open well pump enquiries"],
       [
         "v4-submersible",
-        "V4 Submersible Pumps",
+        "Submersible Pumps",
         "4-inch submersible pump range",
       ],
       ["unsure", "Not sure — help me choose", "Compare available information"],
@@ -2625,7 +2618,64 @@ function Resources() {
   );
 }
 
+function CompanyHistoryTimeline() {
+  return (
+    <section
+      className="section company-history-section"
+      id="company-history"
+      aria-labelledby="company-history-title"
+    >
+      <div className="container">
+        <div className="section-head company-history-heading">
+          <div>
+            <Eyebrow>OUR JOURNEY</Eyebrow>
+            <h2 id="company-history-title">
+              From Our Beginning to Building a Better Future
+            </h2>
+          </div>
+          <p>
+            A chronological journey through MAXBE company and dealer network
+            milestones.
+          </p>
+        </div>
+        <ol className="company-journey-timeline">
+          {companyHistoryMilestones.map((milestone) => {
+            const Icon = milestone.icon;
+            return (
+              <li className="company-journey-milestone" key={milestone.id}>
+                <span className="company-journey-node" aria-hidden="true">
+                  <Icon size={19} />
+                </span>
+                <div className="company-journey-copy">
+                  <span className="company-journey-year">{milestone.year}</span>
+                  <h3>{milestone.heading}</h3>
+                  <p>{milestone.description}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
 function About() {
+  useEffect(() => {
+    if (window.location.hash !== "#company-history") return;
+
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById("company-history")?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "start",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <>
       <Meta
@@ -2638,7 +2688,7 @@ function About() {
         text="Learn about MAXBE Industries, its Coimbatore roots, and the pump categories listed on this website."
       />
       <section className="section about-story-section">
-        <div className="container split">
+        <div className="container about-story-layout">
           <div className="story-copy about-story-copy">
             <Eyebrow>WHO WE ARE</Eyebrow>
             <h2>MAXBE INDUSTRIES — Coimbatore, since 1992</h2>
@@ -2658,17 +2708,9 @@ function About() {
               Browse Our Products <ArrowRight size={15} />
             </Link>
           </div>
-          <div className="story-panel about-brand-panel">
-            <img
-              className="about-brand-logo"
-              src="/assets/maxbe-logo-transparent.png"
-              alt="MAXBE Pumps"
-            />
-            <p>LOW VOLTAGE KING</p>
-            <span>MAXBE Industries · Coimbatore · Est. 1992</span>
-          </div>
         </div>
       </section>
+      <CompanyHistoryTimeline />
       <section className="section about-values-section">
         <div className="container split">
           <article className="story-panel">
@@ -2676,7 +2718,7 @@ function About() {
             <h3>Pump options for water needs</h3>
             <p>
               The ranges listed on this website include monoblock, open well
-              submersible, and V4 submersible pumps for the applications
+              submersible and submersible pumps for the applications
               described in the published product information.
             </p>
           </article>
@@ -2688,43 +2730,6 @@ function About() {
               contact MAXBE to confirm product fit and current availability.
             </p>
           </article>
-        </div>
-      </section>
-      <section className="section">
-        <div className="container section-head">
-          <div>
-            <Eyebrow>CORE VALUES</Eyebrow>
-            <h2>What We Stand For</h2>
-          </div>
-          <p>
-            Use the published information as a starting point and confirm
-            current product details directly with MAXBE.
-          </p>
-        </div>
-        <div className="container tile-grid">
-          {[
-            [
-              "Clear product categories",
-              "Browse the three pump ranges listed on this website.",
-            ],
-            [
-              "Application context",
-              "Review water-source and delivery prompts before comparing options.",
-            ],
-            [
-              "Direct enquiries",
-              "Use the available phone, email and WhatsApp contact links.",
-            ],
-            [
-              "Honest availability",
-              "Missing official media, catalogue and dealer details are identified.",
-            ],
-          ].map(([title, text]) => (
-            <article className="tile benefit-tile" key={title}>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </article>
-          ))}
         </div>
       </section>
       <section className="section about-standard-section">
@@ -2797,14 +2802,15 @@ function About() {
         <div className="container about-dealer-card">
           <div>
             <Eyebrow>DEALER NETWORK</Eyebrow>
-            <h2>Looking for a local MAXBE dealer?</h2>
+            <h2>Ask about dealer availability in your area</h2>
             <p>
-              A verified public dealer directory is not currently available.
-              Contact MAXBE to confirm dealer availability in your area.
+              MAXBE does not currently publish a verified dealer directory.
+              Contact our team and we will help confirm dealer availability for
+              your location.
             </p>
           </div>
           <Link className="btn" href="/find-a-dealer">
-            Find a Dealer <ArrowRight size={16} />
+            Dealer Enquiry <ArrowRight size={16} />
           </Link>
         </div>
       </section>
@@ -2843,9 +2849,6 @@ function NotFound() {
 }
 
 function DealerFinder() {
-  const [locationQuery, setLocationQuery] = useState("");
-  const [searchedLocation, setSearchedLocation] = useState("");
-
   return (
     <>
       <Meta
@@ -2856,57 +2859,34 @@ function DealerFinder() {
         kicker="DEALER NETWORK"
         title="Find a MAXBE Dealer"
         text="Contact the MAXBE team to confirm current dealer availability for your area."
+        className="dealer-enquiry-hero"
       />
       <section className="section dealer-finder-section">
         <div className="container dealer-finder-card">
-          <div>
+          <div className="dealer-enquiry-copy">
             <Eyebrow>DEALER INFORMATION</Eyebrow>
-            <h2>Search for a dealer near you</h2>
-            <form
-              className="dealer-lookup-form"
-              onSubmit={(event) => {
-                event.preventDefault();
-                setSearchedLocation(locationQuery.trim());
-              }}
-            >
-              <label htmlFor="dealer-location-search">
-                City, area or PIN code
-              </label>
-              <div className="dealer-lookup-controls">
-                <input
-                  id="dealer-location-search"
-                  name="location"
-                  autoComplete="postal-code"
-                  placeholder="Enter a city, area or PIN code"
-                  value={locationQuery}
-                  onChange={(event) => setLocationQuery(event.target.value)}
-                  required
-                />
-                <button className="btn" type="submit">
-                  <Search size={16} aria-hidden="true" />
-                  Search
-                </button>
-              </div>
-            </form>
-            {searchedLocation && (
-              <p className="dealer-search-result" role="status">
-                No verified dealer listings are available for{" "}
-                <strong>{searchedLocation}</strong> in the website directory.
-                Contact MAXBE to check current local availability.
-              </p>
-            )}
+            <h2>Dealer availability enquiry</h2>
             <p>
-              A verified public dealer directory is not currently available on
-              this website, so this search does not return unverified names or
-              locations. The contact details alongside this search are for
-              MAXBE Industries.
+              A verified public dealer directory is not currently available.
+              Contact MAXBE Industries to check dealer availability in your
+              area. The details shown here are for MAXBE, not a local dealer.
             </p>
+            <a
+              className="btn"
+              href={`mailto:${factoryLocation.email}?subject=${encodeURIComponent("Dealer availability enquiry")}`}
+            >
+              <MessageCircle size={16} aria-hidden="true" />
+              Enquire by Email
+            </a>
           </div>
           <div className="dealer-finder-contact">
-            <a href="tel:+919488353564">
-              <PhoneCall size={18} aria-hidden="true" />
-              94883 53564
-            </a>
+            <strong>Contact MAXBE Industries</strong>
+            {factoryLocation.phones.map((phone) => (
+              <a href={phone.href} key={phone.href}>
+                <PhoneCall size={18} aria-hidden="true" />
+                <span>{phone.value}</span>
+              </a>
+            ))}
             <a href={`mailto:${factoryLocation.email}`}>
               <MessageCircle size={18} aria-hidden="true" />
               {factoryLocation.email}
@@ -2917,16 +2897,13 @@ function DealerFinder() {
               ))}
             </address>
             <a
-              href={factoryMapPlaceUrl}
+              href={factoryDirectionsUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Navigation size={18} aria-hidden="true" />
-              View MAXBE Industries location
+              Directions to MAXBE Industries
             </a>
-            <Link className="btn outline" href="/dealers#enquiry-form">
-              Become a Dealer <ArrowRight size={16} />
-            </Link>
           </div>
         </div>
       </section>
@@ -2935,6 +2912,8 @@ function DealerFinder() {
 }
 
 function App() {
+  const [location] = useLocation();
+
   return (
     <>
       <Shell>
@@ -2965,6 +2944,7 @@ function App() {
           </Route>
           <Route component={NotFound} />
         </Switch>
+        {location === "/contact" && <WhatsAppFloatingButton />}
       </Shell>
     </>
   );

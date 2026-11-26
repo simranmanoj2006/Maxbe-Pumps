@@ -11,8 +11,7 @@ export const factoryLocation = {
     { label: 'Mobile 2', value: '94425 73564', href: 'tel:+919442573564' },
     { label: 'Factory', value: '0422-2654185', href: 'tel:+914222654185' },
   ],
-  email: 'maxbeindustries@yahoo.co.in',
-  secondaryEmail: 'maxbeindustries@hotmail.com',
+  email: 'maxbepumps@gmail.com',
   businessHours: 'Mon – Sat: 9:00 AM – 6:00 PM',
 } as const;
 

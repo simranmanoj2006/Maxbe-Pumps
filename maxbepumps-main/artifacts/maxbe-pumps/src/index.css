@@ -4129,7 +4129,15 @@ textarea:focus-visible {
 }
 .site {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow: clip;
+}
+.site > main {
+  flex: 1 0 auto;
+}
+.site > .footer {
+  flex-shrink: 0;
 }
 .announcement {
   color: #faf8f2;
@@ -5238,7 +5246,7 @@ body {
 }
 .section-head h2,
 .story-copy h2 {
-  font-family: Manrope, sans-serif;
+  font-family: Inter, sans-serif;
 }
 .tile {
   background: #fbfaf8;
@@ -5415,7 +5423,7 @@ body {
   }
 }
 :root {
-  --font-heading: "Manrope", sans-serif;
+  --font-heading: "Inter", sans-serif;
   --font-body: "Inter", sans-serif;
   --brand-red: #f60202;
   --maxbe-red: #f60202;
@@ -5515,9 +5523,7 @@ body {
   color: var(--maxbe-red);
 }
 .tile-num {
-  font-family:
-    Space Mono,
-    monospace;
+  font-family: Inter, sans-serif;
 }
 .page-hero h1 {
   color: #fffaf2;
@@ -6226,7 +6232,7 @@ body {
   --maxbe-light-gold: #fff2cc;
   --maxbe-white: #fff;
   --maxbe-ink: #142b4a;
-  --font-heading: "Montserrat", sans-serif;
+  --font-heading: "Inter", sans-serif;
   --font-body: "Inter", sans-serif;
 }
 html {
@@ -7597,9 +7603,15 @@ h6,
   gap: 17px;
   display: grid;
 }
+.factory-company-summary {
+  margin: 0;
+  color: #514746;
+  font-size: 14px;
+  line-height: 1.7;
+}
 .factory-contact-name,
 .factory-contact-row {
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   display: flex;
 }
@@ -7622,6 +7634,7 @@ h6,
   line-height: 1.65;
 }
 .factory-contact-row address {
+  align-self: flex-start;
   font-style: normal;
 }
 .factory-contact-row address span {
@@ -7634,6 +7647,26 @@ h6,
   font-weight: 700;
   -webkit-text-decoration: underline #8b101859;
   text-decoration: underline #8b101859;
+}
+.factory-contact-row.factory-whatsapp-row {
+  width: fit-content;
+  color: #514746;
+  background: transparent;
+  text-decoration: none;
+  font-weight: inherit;
+  transition: color 0.2s, transform 0.2s;
+}
+.factory-contact-row.factory-whatsapp-row > svg {
+  color: var(--maxbe-red);
+}
+.factory-contact-row.factory-whatsapp-row:hover {
+  color: var(--maxbe-red);
+  transform: translateX(2px);
+}
+.factory-contact-row.factory-whatsapp-row:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid var(--maxbe-red);
+  outline-offset: 3px;
 }
 .factory-directions-link {
   background: var(--maxbe-red);
@@ -7785,7 +7818,8 @@ h6,
 }
 @media (prefers-reduced-motion: reduce) {
   .factory-directions-link,
-  .factory-map-search-link {
+  .factory-map-search-link,
+  .factory-contact-row.factory-whatsapp-row {
     transition: none !important;
   }
   .factory-directions-link:hover {
@@ -8659,13 +8693,15 @@ h6,
   padding: 8px 12px;
 }
 .site .site-whatsapp-float {
-  background: #075e3a;
-  border-color: #fff;
+  background: #fff;
+  border-color: #eadcda;
+  color: #d71920;
   box-shadow: 0 8px 26px #0000003d;
 }
 .site .site-whatsapp-float:hover,
 .site .site-whatsapp-float:focus-visible {
-  background: #064c2f;
+  background: #fff;
+  color: #b9141b;
 }
 :focus-visible {
   outline-offset: 3px;
@@ -8981,8 +9017,8 @@ h6,
   --brand-border-strong: #c8cdd3;
   --brand-focus: #f60202;
   --brand-error: #b42318;
-  --brand-whatsapp: #25d366;
-  --brand-whatsapp-hover: #1fb95a;
+  --brand-whatsapp: #d71920;
+  --brand-whatsapp-hover: #b9141b;
   --brand-shadow: 0 18px 48px #11111114;
   --brand-shadow-soft: 0 8px 24px #1111110e;
   --brand-radius: 8px;
@@ -8992,7 +9028,7 @@ h6,
   --maxbe-ink: var(--brand-secondary);
   --maxbe-gold: var(--brand-primary);
   --maxbe-light-gold: #ffcfd0;
-  --font-heading: "Manrope", "Inter", sans-serif;
+  --font-heading: "Inter", sans-serif;
   --font-body: "Inter", sans-serif;
 }
 body,
@@ -9127,6 +9163,14 @@ textarea:focus-visible {
 .footer-socials a {
   background: #ffffff0f;
   border-color: #ffffff2e;
+}
+.footer-socials a[href*="wa.me"] {
+  color: #fff;
+  transition: color 0.2s;
+}
+.footer-socials a[href*="wa.me"]:hover,
+.footer-socials a[href*="wa.me"]:focus-visible {
+  color: var(--maxbe-red);
 }
 .hero:before {
   background: linear-gradient(90deg, #111111ed, #111111c2 46%, #1111112e);
@@ -9498,7 +9542,6 @@ textarea:focus,
 .hero-actions .btn.whatsapp-enquiry,
 .contact-social-links a[href*="wa.me"],
 .whatsapp-enquiry,
-a[href*="wa.me"],
 .product-detail-actions .whatsapp-enquiry {
   border-color: var(--brand-whatsapp);
   background: var(--brand-whatsapp);
@@ -9514,7 +9557,7 @@ a[href*="wa.me"],
   color: #fff;
 }
 .site .site-whatsapp-float {
-  box-shadow: 0 10px 28px #25d3663d;
+  box-shadow: 0 10px 28px rgb(24 39 52 / 13%);
 }
 .category-product-range-section {
   color: #fff;

@@ -1,18 +1,101 @@
-import { ArrowUpRight, ExternalLink, Mail, MapPin, Navigation, Phone } from 'lucide-react';
-import { factoryDirectionsUrl, factoryLocation, factoryMapEmbedUrl, factoryMapPlaceUrl } from '../data/factory';
+import {
+  ArrowUpRight,
+  ExternalLink,
+  Mail,
+  MapPin,
+  Navigation,
+  Phone,
+} from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa6';
+import {
+  createWhatsAppUrl,
+  factoryDirectionsUrl,
+  factoryLocation,
+  factoryMapEmbedUrl,
+  factoryMapPlaceUrl,
+} from '../data/factory';
 
-export function FactoryContactDetails() {
-
-  return <div className="factory-contact-details">
-    <div className="factory-contact-name"><MapPin size={19} aria-hidden="true"/><h3>{factoryLocation.name}</h3></div>
-    <div className="factory-contact-row"><MapPin size={17} aria-hidden="true"/><address>{factoryLocation.addressLines.map(line => <span key={line}>{line}</span>)}</address></div>
-    <div className="factory-contact-row"><Phone size={17} aria-hidden="true"/><span><b>Phone:</b> {factoryLocation.phones.map((phone,index)=><span className="factory-phone-link" key={phone.href}>{index>0&&' · '}<a href={phone.href}>{phone.value}</a>{phone.label==='Factory'?' (Factory)':''}</span>)}</span></div>
-    <div className="factory-contact-row"><Mail size={17} aria-hidden="true"/><span><b>Email:</b> <a href={`mailto:${factoryLocation.email}`}>{factoryLocation.email}</a></span></div>
-    <div className="factory-contact-row factory-business-hours"><span><b>Business hours:</b> {factoryLocation.businessHours}</span></div>
-    <a className="factory-directions-link" href={factoryDirectionsUrl} target="_blank" rel="noopener noreferrer">
-      <Navigation size={16} aria-hidden="true"/>Get Directions<ArrowUpRight size={14} aria-hidden="true"/>
-    </a>
-  </div>;
+export function FactoryContactDetails({
+  showCompanySummary = false,
+}: {
+  showCompanySummary?: boolean;
+}) {
+  return (
+    <div className="factory-contact-details">
+      {showCompanySummary && (
+        <p className="factory-company-summary">
+          Established in 1992 in Coimbatore, MAXBE Industries manufactures and
+          supplies the MAXBE PUMPS brand. The company’s product range includes
+          monoblock pumps, open well submersible pumps and slim 4-inch V4
+          submersible pumps, designed for low-voltage conditions common in rural
+          and semi-urban areas.
+        </p>
+      )}
+      <div className="factory-contact-name">
+        <MapPin size={19} aria-hidden="true" />
+        <h3>{factoryLocation.name}</h3>
+      </div>
+      <div className="factory-contact-row">
+        <MapPin size={17} aria-hidden="true" />
+        <address>
+          {factoryLocation.addressLines.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </address>
+      </div>
+      <div className="factory-contact-row">
+        <Phone size={17} aria-hidden="true" />
+        <span>
+          <b>Phone:</b>{" "}
+          {factoryLocation.phones.map((phone, index) => (
+            <span className="factory-phone-link" key={phone.href}>
+              {index > 0 && " · "}
+              <a href={phone.href}>{phone.value}</a>
+              {phone.label === "Factory" ? " (Factory)" : ""}
+            </span>
+          ))}
+        </span>
+      </div>
+      <div className="factory-contact-row">
+        <Mail size={17} aria-hidden="true" />
+        <span>
+          <b>Email:</b>{" "}
+          <a href={`mailto:${factoryLocation.email}`}>
+            {factoryLocation.email}
+          </a>
+        </span>
+      </div>
+      <a
+        className="factory-contact-row factory-whatsapp-row"
+        href={createWhatsAppUrl(
+          "Hello MAXBE PUMPS, I would like to enquire about your pumps.",
+        )}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open WhatsApp chat with MAXBE Pumps"
+      >
+        <FaWhatsapp size={17} aria-hidden="true" />
+        <span>
+          <b>WhatsApp:</b> Chat with MAXBE Pumps
+        </span>
+      </a>
+      <div className="factory-contact-row factory-business-hours">
+        <span>
+          <b>Business hours:</b> {factoryLocation.businessHours}
+        </span>
+      </div>
+      <a
+        className="factory-directions-link"
+        href={factoryDirectionsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Navigation size={16} aria-hidden="true" />
+        Get Directions
+        <ArrowUpRight size={14} aria-hidden="true" />
+      </a>
+    </div>
+  );
 }
 
 export function FactoryMap({ variant }: { variant: 'compact' | 'large' }) {
@@ -55,7 +138,7 @@ export function ContactFactoryLocation() {
         <p>Visit or contact our factory using the details below.</p>
       </div>
       <div className="contact-factory-layout">
-        <article className="contact-factory-card"><FactoryContactDetails/></article>
+        <article className="contact-factory-card"><FactoryContactDetails showCompanySummary/></article>
         <FactoryMap variant="large"/>
       </div>
     </div>

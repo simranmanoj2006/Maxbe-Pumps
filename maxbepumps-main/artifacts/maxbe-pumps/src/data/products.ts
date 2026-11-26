@@ -42,13 +42,13 @@ export const categories: ProductCategory[] = [
     icon: '🔧',
   },
   {
-    name: 'Open Well Submersible',
+    name: 'Open Well Pumps',
     slug: 'openwell',
     description: 'Submersible pumps for open wells, sumps and rainwater harvesting pits.',
     icon: '💧',
   },
   {
-    name: 'V4 Submersible Pumps',
+    name: 'Submersible Pumps',
     slug: 'v4-submersible',
     description: '4-inch borewell pumps for deep installations in agriculture and buildings.',
     icon: '⚡',
